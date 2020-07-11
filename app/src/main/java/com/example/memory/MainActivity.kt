@@ -1,5 +1,6 @@
 package com.example.memory
 
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*
@@ -12,5 +13,11 @@ class MainActivity : AppCompatActivity() {
         aboutButton.setOnClickListener {
             About(this).show()
         }
+
+        newGameButton.setOnClickListener {
+            NewGameDialog(this).show()
+        }
+
+
     }
 }

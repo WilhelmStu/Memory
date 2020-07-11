@@ -5,4 +5,8 @@
     <string name="about">About</string>
     <string name="app_description">This is the App created for the final project of the App-Development course</string>
     <string name="close">Close</string>
+    <string name="cancel">CANCEL</string>
+    <string name="newGameDialogText">Create a new game</string>
+    <string name="startD">START</string>
+    <string name="selectSize">Select game Size:</string>
 </resources>
