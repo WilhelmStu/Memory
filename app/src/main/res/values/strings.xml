@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Memory</string>
+    <string name="memory">Memory-Game</string>
+    <string name="start">Start New Game ></string>
+    <string name="about">About</string>
+    <string name="app_description">This is the App created for the final project of the App-Development course</string>
+    <string name="close">Close</string>
 </resources>
