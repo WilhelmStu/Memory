@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#534D4D"
-    tools:context=".MainActivity">
+    tools:context=".controller.MainActivity">
 
     <Button
         android:id="@+id/newGameButton"

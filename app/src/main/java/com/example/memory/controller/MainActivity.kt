@@ -1,8 +1,9 @@
-package com.example.memory
+package com.example.memory.controller
 
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.memory.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

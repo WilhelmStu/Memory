@@ -1,4 +1,4 @@
-package com.example.memory
+package com.example.memory.controller
 
 import android.app.Activity
 import android.app.Dialog
@@ -10,6 +10,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Window
 import androidx.core.content.ContextCompat.startActivity
+import com.example.memory.R
 import kotlinx.android.synthetic.main.toast_layout.*
 
 
@@ -43,7 +44,6 @@ class About(var c: Activity) : Dialog(c) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         startActivity(c, intent, onSaveInstanceState())
     }
-
 
     private fun sendMail() {
         val intent =

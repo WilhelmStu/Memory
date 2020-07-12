@@ -1,4 +1,4 @@
-package com.example.memory
+package com.example.memory.controller
 
 import android.app.Activity
 import android.app.Dialog
@@ -12,6 +12,8 @@ import android.view.View
 import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import com.example.memory.R
+import com.example.memory.modell.MainModel
 import kotlinx.android.synthetic.main.new_game_dialog.*
 
 
@@ -22,6 +24,7 @@ class NewGameDialog(var c: Activity) : Dialog(c), AdapterView.OnItemSelectedList
     }
     private var size = 16;
     private val tag = "NewGameDialog"
+    private val model = MainModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +32,11 @@ class NewGameDialog(var c: Activity) : Dialog(c), AdapterView.OnItemSelectedList
         setContentView(R.layout.new_game_dialog)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
 
-        val listOfSizes = arrayOf("16 Tiles", "24 Tiles", "32 Tiles")
+
+
         spinner!!.onItemSelectedListener = this
 
-        val arrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, listOfSizes)
+        val arrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, model.listOfSizes)
 
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = arrayAdapter
@@ -49,9 +53,9 @@ class NewGameDialog(var c: Activity) : Dialog(c), AdapterView.OnItemSelectedList
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         when (position) {
-            0 -> size = 16
-            1 -> size = 24
-            2 -> size = 32
+            0 -> size = MainModel.SMALL
+            1 -> size = MainModel.MEDIUM
+            2 -> size = MainModel.LARGE
             else -> Log.e(tag, "Not an available selection!")
         }
     }
