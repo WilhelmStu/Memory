@@ -20,7 +20,7 @@ class CustomAdapter(private val arr: IntArray, private val listener: CustomOnCli
     }
 
     override fun getItemViewType(position: Int) =
-        when (arr.size == MainModel.SMALL) {
+        when (arr.size == MainModel.SMALL || arr.size == MainModel.MEDIUM) {
             true -> TYPE1
             false -> TYPE2
         }
