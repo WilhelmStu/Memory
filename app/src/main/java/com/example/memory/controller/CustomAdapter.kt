@@ -1,6 +1,5 @@
 package com.example.memory.controller
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,7 +53,6 @@ class CustomAdapter(private val arr: IntArray, private val listener: CustomOnCli
         inViewHolder.gridItem.setOnClickListener {
             listener.onCardClicked(int, inViewHolder.gridItem)
         }
-    // todo clean up code, UI and rename functions!!
     }
 
     private fun bindSecondItems(holder: RecyclerView.ViewHolder, int: Int) {
@@ -62,8 +60,6 @@ class CustomAdapter(private val arr: IntArray, private val listener: CustomOnCli
         outViewHolder.gridItem.setOnClickListener {
             listener.onCardClicked(int, outViewHolder.gridItem)
         }
-
-
     }
 
 

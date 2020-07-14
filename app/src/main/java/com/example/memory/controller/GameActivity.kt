@@ -7,13 +7,12 @@ import android.animation.AnimatorSet
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.animation.doOnEnd
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.memory.R
 import com.example.memory.modell.MainModel
 import kotlinx.android.synthetic.main.activity_game.*
-import java.lang.Thread.sleep
 import kotlin.random.Random
 
 
@@ -25,10 +24,15 @@ private var firstView: ImageView? = null
 private var remainingPairs = 0
 
 /** ----Animation---- */
-private var mSetRightOut: AnimatorSet? = null
-private var mSetLeftIn: AnimatorSet? = null
-private var mSetRightOutView2: AnimatorSet? = null
-private var mSetLeftInView2: AnimatorSet? = null
+private var animFlipOut: AnimatorSet? = null
+private var animFlipIn: AnimatorSet? = null
+private var animFlipOutSecond: AnimatorSet? = null
+private var animFlipInSecond: AnimatorSet? = null
+private var animShake: AnimatorSet? = null
+private var animShakeSecond: AnimatorSet? = null
+private var animFadeOut: AnimatorSet? = null
+private var animFadeOutSecond: AnimatorSet? = null
+
 
 class GameActivity : AppCompatActivity(), CustomOnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,10 +41,14 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
         // get selected size from intent (SMALL if not specified)
         init(intent.getIntExtra("SIZE", MainModel.SMALL))
-        mSetRightOut = AnimatorInflater.loadAnimator(this, R.animator.out_animation) as AnimatorSet?
-        mSetLeftIn = AnimatorInflater.loadAnimator(this, R.animator.in_animation) as AnimatorSet?
-        mSetRightOutView2 = AnimatorInflater.loadAnimator(this, R.animator.out_animation) as AnimatorSet?
-        mSetLeftInView2 = AnimatorInflater.loadAnimator(this, R.animator.in_animation) as AnimatorSet?
+        animFlipOut = AnimatorInflater.loadAnimator(this, R.animator.out_animation) as AnimatorSet?
+        animFlipIn = AnimatorInflater.loadAnimator(this, R.animator.in_animation) as AnimatorSet?
+        animFlipOutSecond = AnimatorInflater.loadAnimator(this, R.animator.out_animation) as AnimatorSet?
+        animFlipInSecond = AnimatorInflater.loadAnimator(this, R.animator.in_animation) as AnimatorSet?
+        animShake = AnimatorInflater.loadAnimator(this, R.animator.shake_animation) as AnimatorSet?
+        animShakeSecond = AnimatorInflater.loadAnimator(this, R.animator.shake_animation) as AnimatorSet?
+        animFadeOut = AnimatorInflater.loadAnimator(this, R.animator.fadeout_animation) as AnimatorSet?
+        animFadeOutSecond = AnimatorInflater.loadAnimator(this, R.animator.fadeout_animation) as AnimatorSet?
 
     }
 
@@ -64,14 +72,16 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
     override fun onCardClicked(i: Int, view: ImageView) {
         Log.i(tag, "Card clicked, ID: $i")
+        if (arr[i] == -1) {
+            Log.i(tag, "already found")
+            return
+        }
         if (firstCardID == -1) { // first card selected
             Log.i(tag, "is first card")
             firstCardID = i
             changeCameraDistance(view)
             flipCard(view)
             firstView = view
-
-
         } else if (firstCardID == i) { // first card selected again do nothing
             Log.i(tag, "first card clicked again")
         } else { // second card selected, do animation and check for pair
@@ -79,10 +89,12 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
             changeCameraDistance(view)
             if (randArr[firstCardID] == randArr[i]) { // got a pair -> make them vanish
                 Log.i(tag, "got a pair!! ( ${randArr[firstCardID]}, ${randArr[i]})")
-                flipCard(view)
-            } else { // not a pair flip them back.. //todo shake cards
-                Log.i(tag, "not a pair!")
-                flipCardsBack(firstView, view)
+                arr[firstCardID] = -1
+                arr[i] = -1
+                flipAndFadeOut(firstView, view)
+            } else { // not a pair flip them back..
+                Log.i(tag, "not a pair!") // todo remove pairs and block from beeing reselected
+                shakeAndflipCardsBack(firstView, view)
 
 
 
@@ -91,7 +103,19 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
             firstView = null
 
         }
+        if(checkForVictory()){
+            Toast.makeText(this,"VICTORY!!", Toast.LENGTH_LONG).show()
+        }
 
+    }
+
+    private fun  checkForVictory() : Boolean {
+       for (index in arr.indices){
+           if(arr[index] != -1){
+               return false
+           }
+       }
+        return true
     }
 
     private fun getRandomMemoryOrder(size: Int) {
@@ -117,57 +141,94 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
         view.cameraDistance = scale
     }
 
+    /**
+     * Flips the first selected card
+     */
     private fun flipCard(view: ImageView) {
 
-        mSetRightOut?.setTarget(view)
-        mSetLeftIn?.setTarget(view)
-        mSetRightOut?.startDelay = 0
-        mSetRightOut?.start()
+        animFlipOut?.setTarget(view)
+        animFlipIn?.setTarget(view)
+        animFlipOut?.startDelay = 0
+        animFlipOut?.start()
 
-        mSetRightOut?.addListener(object : AnimatorListenerAdapter() {
+        animFlipOut?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
                 view.setImageResource(R.drawable.reddit)
-                mSetLeftIn?.start()
+                animFlipIn?.start()
             }
         })
     }
 
-    private fun flipCardsBack(firstView: ImageView?, secondView: ImageView?) {
+    private fun flipAndFadeOut(firstView: ImageView?, secondView: ImageView?) {
 
-        mSetRightOut?.setTarget(firstView)
-        mSetLeftIn?.setTarget(firstView)
-        mSetRightOutView2?.setTarget(secondView)
-        mSetLeftInView2?.setTarget(secondView)
-        mSetRightOutView2?.start()
-        mSetRightOutView2?.removeAllListeners()
-        mSetRightOutView2?.addListener(object : AnimatorListenerAdapter() {
+        animFlipOut?.setTarget(secondView)
+        animFlipIn?.setTarget(secondView)
+        animFlipOut?.startDelay = 0
+        animFlipOut?.start()
+
+        animFlipOut?.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                super.onAnimationEnd(animation)
+                secondView?.setImageResource(R.drawable.reddit)
+                animFlipIn?.start()
+            }
+        })
+
+        animFadeOut?.setTarget(firstView)
+        animFadeOutSecond?.setTarget(secondView)
+        animFadeOut?.playTogether(animFadeOutSecond)
+        animFadeOut?.startDelay = 1000
+        animFadeOut?.start()
+
+    }
+
+    /**
+     * Flips the second selected card and then flips both the first and second one back
+     */
+    private fun shakeAndflipCardsBack(firstView: ImageView?, secondView: ImageView?) {
+
+        animFlipOut?.setTarget(firstView)
+        animFlipIn?.setTarget(firstView)
+        animFlipOutSecond?.setTarget(secondView)
+        animFlipInSecond?.setTarget(secondView)
+        animFlipOutSecond?.start()
+        animFlipOutSecond?.removeAllListeners()
+        animFlipOutSecond?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
                 secondView?.setImageResource(R.drawable.reddit) // todo make model save selected asset
-                mSetLeftInView2?.start()
+                animFlipInSecond?.start()
             }
-        }) // todo shake animation
-        mSetRightOut?.playTogether(mSetRightOutView2)
-        mSetRightOut?.startDelay = 2000
-        mSetRightOut?.start()
-        mSetRightOut?.removeAllListeners()
-        mSetRightOut?.addListener(object : AnimatorListenerAdapter() {
+        })
+
+        // shakes the cards
+        animShake?.setTarget(firstView)
+        animShakeSecond?.setTarget(secondView)
+        animShake?.playTogether(animShakeSecond)
+        animShake?.startDelay = 1000
+        animShake?.start()
+
+        animFlipOut?.playTogether(animFlipOutSecond)
+        animFlipOut?.startDelay = 2000
+        animFlipOut?.start()
+        animFlipOut?.removeAllListeners()
+        animFlipOut?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
                 firstView?.setImageResource(R.drawable.memory_card_back_v1) // todo make model save selected asset
                 secondView?.setImageResource(R.drawable.memory_card_back_v1)
-                mSetLeftIn?.playTogether(mSetLeftInView2)
-                mSetLeftIn?.start()
+                animFlipIn?.playTogether(animFlipInSecond)
+                animFlipIn?.start()
             }
         })
     }
 }
 
 
-// todo assign numbers to each item in int array above
-// todo 2 matching numbers
-// todo animation with a card flip
+
+
+
 // todo cards vanish when equal
 // todo Counter with required turns
 // todo database with highscores, and name who did it (in main menu)
@@ -175,4 +236,5 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
 // todo improve layouts maybe make a third one
 // todo save more stuff in model!!
+
 // todo make toast to show if pair/notpair

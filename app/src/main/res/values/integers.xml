@@ -2,4 +2,5 @@
 <resources>
     <integer name="anim_length">400</integer>
     <integer name="anim_length_half">200</integer>
+    <integer name="anim_shake">100</integer>
 </resources>
