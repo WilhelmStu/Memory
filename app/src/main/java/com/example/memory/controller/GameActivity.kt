@@ -1,9 +1,6 @@
 package com.example.memory.controller
 
-import android.animation.Animator
-import android.animation.AnimatorInflater
-import android.animation.AnimatorListenerAdapter
-import android.animation.AnimatorSet
+
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
@@ -18,22 +15,16 @@ import kotlin.random.Random
 
 private const val tag = "GameActivity"
 private var firstCardID = -1
-private var secondCardID = -1
 private var arr = IntArray(0)
 private var randArr = IntArray(0)
 private var firstView: ImageView? = null
+private var prevView1: ImageView? = null
+private var prevView2: ImageView? = null
+private var prevView1ID = -1
+private var prevView2ID = -1
 private var remainingPairs = 0
 private val model = MainModel()
-
-/** ----Animation---- */
-private var animFlipOut: AnimatorSet? = null
-private var animFlipIn: AnimatorSet? = null
-private var animFlipOutSecond: AnimatorSet? = null
-private var animFlipInSecond: AnimatorSet? = null
-private var animShake: AnimatorSet? = null
-private var animShakeSecond: AnimatorSet? = null
-private var animFadeOut: AnimatorSet? = null
-private var animFadeOutSecond: AnimatorSet? = null
+private var animation: AnimationHandler? = null
 
 
 class GameActivity : AppCompatActivity(), CustomOnClickListener {
@@ -43,15 +34,7 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
         // get selected size from intent (SMALL if not specified)
         init(intent.getIntExtra("SIZE", MainModel.SMALL))
-        animFlipOut = AnimatorInflater.loadAnimator(this, R.animator.out_animation) as AnimatorSet?
-        animFlipIn = AnimatorInflater.loadAnimator(this, R.animator.in_animation) as AnimatorSet?
-        animFlipOutSecond = AnimatorInflater.loadAnimator(this, R.animator.out_animation) as AnimatorSet?
-        animFlipInSecond = AnimatorInflater.loadAnimator(this, R.animator.in_animation) as AnimatorSet?
-        animShake = AnimatorInflater.loadAnimator(this, R.animator.shake_animation) as AnimatorSet?
-        animShakeSecond = AnimatorInflater.loadAnimator(this, R.animator.shake_animation) as AnimatorSet?
-        animFadeOut = AnimatorInflater.loadAnimator(this, R.animator.fadeout_animation) as AnimatorSet?
-        animFadeOutSecond = AnimatorInflater.loadAnimator(this, R.animator.fadeout_animation) as AnimatorSet?
-
+        animation = AnimationHandler(this, randArr)
     }
 
 
@@ -75,52 +58,47 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
     override fun onCardClicked(i: Int, view: ImageView) {
         Log.i(tag, "Card clicked, ID: $i")
-        if (arr[i] == -1) {
-            Log.i(tag, "already found")
+        if (arr[i] == -1 || firstCardID == i) {
+            Log.i(tag, "already found // clicked first card again")
             return
         }
+        checkForWrongCardAlignment(view)
         if (firstCardID == -1) { // first card selected
             Log.i(tag, "is first card")
             firstCardID = i
             changeCameraDistance(view)
-            flipCard(view, i)
+            animation?.flipCard(view, i)
             firstView = view
-        } else if (firstCardID == i) { // first card selected again do nothing
-            Log.i(tag, "first card clicked again")
         } else { // second card selected, do animation and check for pair
             Log.i(tag, "is second card")
             changeCameraDistance(view)
-            secondCardID = i
+            firstView?.setImageResource(model.cardTextures[randArr[firstCardID]])
+            firstView?.rotation = 0F
+            firstView?.rotationY = 0F
             if (randArr[firstCardID] == randArr[i]) { // got a pair -> make them vanish
                 Log.i(tag, "got a pair!! ( ${randArr[firstCardID]}, ${randArr[i]})")
                 arr[firstCardID] = -1
                 arr[i] = -1
-                flipAndFadeOut(firstView, view, i)
+                animation?.flipAndFadeOut(firstView, view, i)
+                remainingPairs--
             } else { // not a pair flip them back..
                 Log.i(tag, "not a pair!")
-                shakeAndflipCardsBack(firstView, view, i)
-
-
+                animation?.shakeAndFlipCardsBack(firstView, view, i)
             }
+            prevView1 = firstView
+            prevView2 = view
+            prevView1ID = firstCardID
+            prevView2ID = i
             firstCardID = -1
-            secondCardID = -1
             firstView = null
 
         }
-        if (checkForVictory()) {
+        if (remainingPairs == 0) {
             Toast.makeText(this, "VICTORY!!", Toast.LENGTH_LONG).show()
         }
 
     }
 
-    private fun checkForVictory(): Boolean {
-        for (index in arr.indices) {
-            if (arr[index] != -1) {
-                return false
-            }
-        }
-        return true
-    }
 
     private fun getRandomMemoryOrder(size: Int) {
 
@@ -145,95 +123,19 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
         view.cameraDistance = scale
     }
 
-    /**
-     * Flips the first selected card
-     */
-    private fun flipCard(view: ImageView, id: Int) {
-
-        animFlipOut?.setTarget(view)
-        animFlipIn?.setTarget(view)
-        animFlipOut?.startDelay = 0
-        animFlipOut?.start()
-
-        animFlipOut?.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                super.onAnimationEnd(animation)
-                view.setImageResource(model.cardTextures[randArr[id]])
-                animFlipIn?.start()
-            }
-        })
-    }
-
-    /**
-     * Flips second card and lets them fade out since they are a pair
-     */
-    private fun flipAndFadeOut(firstView: ImageView?, secondView: ImageView?, idSecond: Int) {
-
-        animFlipOut?.setTarget(secondView)
-        animFlipIn?.setTarget(secondView)
-        animFlipOut?.startDelay = 0
-        animFlipOut?.start()
-
-
-        animFlipOut?.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                super.onAnimationEnd(animation)
-                secondView?.setImageResource(model.cardTextures[randArr[idSecond]])
-                animFlipIn?.start()
-            }
-        })
-
-        animFadeOut?.setTarget(firstView)
-        animFadeOutSecond?.setTarget(secondView)
-        animFadeOut?.playTogether(animFadeOutSecond)
-        animFadeOut?.startDelay = 1000
-        animFadeOut?.start()
-
-    }
-
-    /**
-     * Flips the second selected card and then flips both the first and second one back
-     */
-    private fun shakeAndflipCardsBack(
-        firstView: ImageView?,
-        secondView: ImageView?,
-        idSecond: Int
-    ) {
-
-        animFlipOut?.setTarget(firstView)
-        animFlipIn?.setTarget(firstView)
-        animFlipOutSecond?.setTarget(secondView)
-        animFlipInSecond?.setTarget(secondView)
-        animFlipOutSecond?.start()
-        animFlipOutSecond?.removeAllListeners()
-        animFlipOutSecond?.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                super.onAnimationEnd(animation)
-                secondView?.setImageResource(model.cardTextures[randArr[idSecond]])
-                animFlipInSecond?.start()
-            }
-        })
-
-        // shakes the cards
-        animShake?.setTarget(firstView)
-        animShakeSecond?.setTarget(secondView)
-        animShake?.playTogether(animShakeSecond)
-        animShake?.startDelay = 1000
-        animShake?.start()
-
-        animFlipOut?.playTogether(animFlipOutSecond)
-        animFlipOut?.startDelay = 2000
-        animFlipOut?.start()
-        animFlipOut?.removeAllListeners()
-        animFlipOut?.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                super.onAnimationEnd(animation)
-                firstView?.setImageResource(R.drawable.memory_card_back_v1)
-                secondView?.setImageResource(R.drawable.memory_card_back_v1)
-                animFlipIn?.playTogether(animFlipInSecond)
-                animFlipIn?.start()
-            }
-        })
+    private fun checkForWrongCardAlignment(view: ImageView) {
+        if (prevView1ID != -1 && arr[prevView1ID] == -1) prevView1?.alpha = 0F
+        if (prevView2ID != -1 && arr[prevView2ID] == -1) prevView2?.alpha = 0F
+        if (prevView1 != null && !(prevView1?.equals(firstView)!! || prevView1?.equals(view)!!)) {
+            prevView1?.setImageResource(R.drawable.memory_card_back_v1)
+            prevView1?.rotation = 0F
+            prevView1?.rotationY = 0F
+        }
+        if (prevView2 != null && !(prevView2?.equals(firstView)!! || prevView2?.equals(view)!!)) {
+            prevView2?.setImageResource(R.drawable.memory_card_back_v1)
+            prevView2?.rotation = 0F
+            prevView2?.rotationY = 0F
+        }
     }
 }
 
@@ -242,7 +144,10 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 // todo database with highscores, and name who did it (in main menu)
 // todo make "sure you want to end this game?" dialog when pressing back..
 
+// todo start game button in main menu
 
 // todo save more stuff in model!!
+
+// todo !!!!!!!!!! end game victory animation !!
 
 // todo make toast to show if pair/notpair
