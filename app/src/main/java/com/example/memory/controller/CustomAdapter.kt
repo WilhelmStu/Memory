@@ -16,23 +16,23 @@ class CustomAdapter(private val arr: IntArray, private val listener: CustomOnCli
     companion object {
         private const val TYPE1 = 0
         private const val TYPE2 = 1
+        private const val TYPE3 = 2
     }
 
     override fun getItemViewType(position: Int) =
-        when (arr.size == MainModel.SMALL || arr.size == MainModel.MEDIUM) {
-            true -> TYPE1
-            false -> TYPE2
+        when (arr.size) {
+            MainModel.SMALL -> TYPE1
+            MainModel.MEDIUM -> TYPE2
+            MainModel.LARGE -> TYPE3
+            else -> TYPE1
         }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
 
-        TYPE1 -> InViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.grid_item, parent, false)
-        )
-        TYPE2 -> OutViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.grid_item2, parent, false)
-        )
+        TYPE1 -> ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grid_item_small, parent, false))
+        TYPE2 -> ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grid_item_medium, parent, false))
+        TYPE3 -> ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.grid_item_large, parent, false))
         else -> throw IllegalArgumentException()
     }
 
@@ -41,35 +41,15 @@ class CustomAdapter(private val arr: IntArray, private val listener: CustomOnCli
         return arr.size
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) =
-        when (holder.itemViewType) {
-            TYPE1 -> bindItems(holder, arr[position])
-            TYPE2 -> bindSecondItems(holder, arr[position])
-            else -> throw  IllegalArgumentException()
-        }
-
-    private fun bindItems(holder: RecyclerView.ViewHolder, int: Int) {
-        val inViewHolder = holder as InViewHolder
-        inViewHolder.gridItem.setOnClickListener {
-            listener.onCardClicked(int, inViewHolder.gridItem)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        holder as ViewHolder
+        holder.gridItem.setOnClickListener {
+            listener.onCardClicked(position, holder.gridItem)
         }
     }
 
-    private fun bindSecondItems(holder: RecyclerView.ViewHolder, int: Int) {
-        val outViewHolder = holder as OutViewHolder
-        outViewHolder.gridItem.setOnClickListener {
-            listener.onCardClicked(int, outViewHolder.gridItem)
-        }
-    }
-
-
-    class InViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val gridItem: ImageView = itemView.findViewById(R.id.gridItem)
     }
-
-    class OutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val gridItem: ImageView = itemView.findViewById(R.id.gridItem2)
-    }
-
 
 }
