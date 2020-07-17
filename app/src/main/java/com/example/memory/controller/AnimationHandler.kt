@@ -1,15 +1,17 @@
 package com.example.memory.controller
 
-import android.animation.Animator
-import android.animation.AnimatorInflater
-import android.animation.AnimatorListenerAdapter
-import android.animation.AnimatorSet
+import android.animation.*
 import android.content.Context
+import android.view.View
+import android.view.animation.Animation
+import android.widget.ImageButton
 import android.widget.ImageView
 import com.example.memory.R
 import com.example.memory.modell.MainModel
+import kotlinx.android.synthetic.main.activity_main.*
 
 class AnimationHandler(context: Context, private var randArr: IntArray) {
+
 
     private val model = MainModel()
     private var animFlipOut = AnimatorInflater.loadAnimator(context, R.animator.out_animation) as AnimatorSet
@@ -20,6 +22,20 @@ class AnimationHandler(context: Context, private var randArr: IntArray) {
     private var animShakeSecond = AnimatorInflater.loadAnimator(context, R.animator.shake_animation) as AnimatorSet
     private var animFadeOut = AnimatorInflater.loadAnimator(context, R.animator.fadeout_animation) as AnimatorSet
     private var animFadeOutSecond = AnimatorInflater.loadAnimator(context, R.animator.fadeout_animation) as AnimatorSet
+
+    fun playNowButton(button: View) {
+
+        val animOut = ObjectAnimator.ofPropertyValuesHolder(button, PropertyValuesHolder.ofFloat("scaleX", 0.85f), PropertyValuesHolder.ofFloat("scaleY", 0.85f))
+        animOut.duration = 600
+        animOut.repeatMode = ObjectAnimator.REVERSE
+        animOut.repeatCount = Animation.INFINITE
+        val animSet = AnimatorSet()
+        animSet.play(animOut)
+        animSet.start()
+
+
+
+    }
 
     /**
      * Flips the first selected card

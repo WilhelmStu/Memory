@@ -10,7 +10,11 @@ class MainModel {
         const val SMALL = 16
         const val MEDIUM = 30
         const val LARGE = 42
+        const val COLUMN_SMALL = 4
+        const val COLUMN_MEDIUM = 5
+        const val COLUMN_LARGE = 6
     }
+
 
     val cardTextures = arrayOf(
         R.drawable.card_1,

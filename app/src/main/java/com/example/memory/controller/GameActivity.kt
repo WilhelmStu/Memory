@@ -25,6 +25,7 @@ private var prevView2ID = -1
 private var remainingPairs = 0
 private val model = MainModel()
 private var animation: AnimationHandler? = null
+private var turnCount = 0
 
 
 class GameActivity : AppCompatActivity(), CustomOnClickListener {
@@ -40,9 +41,9 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
     private fun init(size: Int) {
         Log.i(tag, "Size is: $size")
-        var columns = 4
-        if (size == MainModel.MEDIUM) columns = 5
-        if (size == MainModel.LARGE) columns = 6
+        var columns = MainModel.COLUMN_SMALL
+        if (size == MainModel.MEDIUM) columns = MainModel.COLUMN_MEDIUM
+        if (size == MainModel.LARGE) columns = MainModel.COLUMN_LARGE
         recyclerView.layoutManager = GridLayoutManager(baseContext, columns)
 
         getRandomMemoryOrder(size)
@@ -85,6 +86,8 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
                 Log.i(tag, "not a pair!")
                 animation?.shakeAndFlipCardsBack(firstView, view, i)
             }
+            val text = "Turn Count: ${++turnCount}"
+            turnCountView.text = text
             prevView1 = firstView
             prevView2 = view
             prevView1ID = firstCardID

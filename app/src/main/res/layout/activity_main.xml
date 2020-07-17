@@ -7,12 +7,14 @@
     android:background="#534D4D"
     tools:context=".controller.MainActivity">
 
-    <Button
+    <ImageButton
         android:id="@+id/newGameButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/start"
-        android:textSize="35sp"
+
+        android:layout_width="349dp"
+        android:layout_height="130dp"
+        android:backgroundTint="#00FFFFFF"
+
+        android:src="@drawable/play_now"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,5 +41,19 @@
         app:layout_constraintHorizontal_bias="0.506"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/memory" />
+        app:srcCompat="@drawable/memory_with_shadow" />
+
+    <ImageButton
+        android:id="@+id/colorButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@color/colorBlue"
+        android:padding="8dp"
+        android:tint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/color_switch" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@ import com.example.memory.R
 import kotlinx.android.synthetic.main.toast_layout.*
 
 
-class About(var c: Activity) : Dialog(c) {
+class AboutDialog(var c: Activity) : Dialog(c) {
 
     init {
         setCancelable(true)
