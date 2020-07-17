@@ -10,4 +10,8 @@
     <string name="startD">START</string>
     <string name="selectSize">Select game Size:</string>
     <string name="turnCountText">Turn Count: 0</string>
+    <string name="victory">VICTORY!</string>
+    <string name="victoryText">Congratulations,</string>
+    <string name="restart">Restart</string>
+    <string name="menu">&#60; Menu</string>
 </resources>

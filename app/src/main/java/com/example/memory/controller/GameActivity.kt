@@ -4,7 +4,6 @@ package com.example.memory.controller
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.memory.R
@@ -97,7 +96,7 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
         }
         if (remainingPairs == 0) {
-            Toast.makeText(this, "VICTORY!!", Toast.LENGTH_LONG).show()
+            VictoryDialog(this, intent.getIntExtra("SIZE", MainModel.SMALL), turnCount).show()
         }
 
     }
