@@ -8,60 +8,46 @@
     android:background="@drawable/overlay2"
     android:backgroundTint="#FFFFFF">
 
-    <TextView
-        android:id="@+id/victory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="40dp"
-        android:text="@string/victory"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
-        android:id="@+id/menu"
+        android:id="@+id/backCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="16dp"
         android:freezesText="false"
-        android:text="@string/menu"
+        android:text="@string/cancel"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/restart"
+        app:layout_constraintEnd_toStartOf="@+id/ok"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/congratulations" />
+        app:layout_constraintTop_toBottomOf="@+id/backQuestion" />
 
     <Button
-        android:id="@+id/restart"
+        android:id="@+id/ok"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
-        android:text="@string/restart"
-        app:layout_constraintBottom_toBottomOf="@+id/menu"
+        android:text="@android:string/ok"
+        app:layout_constraintBottom_toBottomOf="@+id/backCancel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
-        app:layout_constraintStart_toEndOf="@+id/menu" />
+        app:layout_constraintStart_toEndOf="@+id/backCancel" />
 
     <TextView
-        android:id="@+id/congratulations"
+        android:id="@+id/backQuestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/victoryText"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginTop="30dp"
+        android:maxWidth="300dp"
+        android:text="@string/backDialog"
         android:textAlignment="center"
         android:textSize="25sp"
-        android:maxWidth="300dp"
-        android:layout_marginHorizontal="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/victory" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

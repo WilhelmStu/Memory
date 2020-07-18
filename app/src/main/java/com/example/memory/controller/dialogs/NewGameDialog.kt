@@ -1,4 +1,4 @@
-package com.example.memory.controller
+package com.example.memory.controller.dialogs
 
 import android.app.Activity
 import android.app.Dialog
@@ -13,6 +13,7 @@ import android.view.Window
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.example.memory.R
+import com.example.memory.controller.GameActivity
 import com.example.memory.modell.MainModel
 import kotlinx.android.synthetic.main.new_game_dialog.*
 
@@ -24,7 +25,6 @@ class NewGameDialog(var c: Activity) : Dialog(c), AdapterView.OnItemSelectedList
     }
     private var size = 16;
     private val tag = "NewGameDialog"
-    private val model = MainModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +36,7 @@ class NewGameDialog(var c: Activity) : Dialog(c), AdapterView.OnItemSelectedList
 
         spinner!!.onItemSelectedListener = this
 
-        val arrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, model.listOfSizes)
+        val arrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, MainModel.listOfSizes)
 
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = arrayAdapter

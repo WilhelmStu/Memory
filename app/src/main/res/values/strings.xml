@@ -7,11 +7,12 @@
     <string name="close">Close</string>
     <string name="cancel">Cancel</string>
     <string name="newGameDialogText">Create a new game</string>
-    <string name="startD">START</string>
-    <string name="selectSize">Select game Size:</string>
+    <string name="startD">START ></string>
+    <string name="selectSize">Amount of tiles:</string>
     <string name="turnCountText">Turn Count: 0</string>
     <string name="victory">VICTORY!</string>
     <string name="victoryText">Congratulations,</string>
     <string name="restart">Restart</string>
     <string name="menu">&#60; Menu</string>
+    <string name="backDialog">Back to main menu?</string>
 </resources>

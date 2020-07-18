@@ -1,12 +1,16 @@
 package com.example.memory.controller
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.memory.R
+import com.example.memory.controller.dialogs.BackDialog
+import com.example.memory.controller.dialogs.VictoryDialog
 import com.example.memory.modell.MainModel
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlin.random.Random
@@ -22,7 +26,6 @@ private var prevView2: ImageView? = null
 private var prevView1ID = -1
 private var prevView2ID = -1
 private var remainingPairs = 0
-private val model = MainModel()
 private var animation: AnimationHandler? = null
 private var turnCount = 0
 
@@ -35,6 +38,7 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
         // get selected size from intent (SMALL if not specified)
         init(intent.getIntExtra("SIZE", MainModel.SMALL))
         animation = AnimationHandler(this, randArr)
+
     }
 
 
@@ -62,7 +66,9 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
             Log.i(tag, "already found // clicked first card again")
             return
         }
+
         checkForWrongCardAlignment(view)
+
         if (firstCardID == -1) { // first card selected
             Log.i(tag, "is first card")
             firstCardID = i
@@ -72,7 +78,7 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
         } else { // second card selected, do animation and check for pair
             Log.i(tag, "is second card")
             changeCameraDistance(view)
-            firstView?.setImageResource(model.cardTextures[randArr[firstCardID]])
+            firstView?.setImageResource(MainModel.cardTextures[randArr[firstCardID]])
             firstView?.rotation = 0F
             firstView?.rotationY = 0F
             if (randArr[firstCardID] == randArr[i]) { // got a pair -> make them vanish
@@ -81,6 +87,10 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
                 arr[i] = -1
                 animation?.flipAndFadeOut(firstView, view, i)
                 remainingPairs--
+                Toast.makeText(
+                    this, "Got a pair!",
+                    Toast.LENGTH_SHORT
+                ).show();
             } else { // not a pair flip them back..
                 Log.i(tag, "not a pair!")
                 animation?.shakeAndFlipCardsBack(firstView, view, i)
@@ -96,7 +106,13 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
         }
         if (remainingPairs == 0) {
-            VictoryDialog(this, intent.getIntExtra("SIZE", MainModel.SMALL), turnCount).show()
+            val tmp = turnCount
+            turnCount = 0
+            VictoryDialog(
+                this,
+                intent.getIntExtra("SIZE", MainModel.SMALL),
+                tmp
+            ).show()
         }
 
     }
@@ -126,30 +142,28 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
     }
 
     private fun checkForWrongCardAlignment(view: ImageView) {
-        if (prevView1ID != -1 && arr[prevView1ID] == -1) prevView1?.alpha = 0F
-        if (prevView2ID != -1 && arr[prevView2ID] == -1) prevView2?.alpha = 0F
-        if (prevView1 != null && !(prevView1?.equals(firstView)!! || prevView1?.equals(view)!!)) {
-            prevView1?.setImageResource(R.drawable.memory_card_back_v1)
-            prevView1?.rotation = 0F
-            prevView1?.rotationY = 0F
+        if (prevView1ID != -1 && arr[prevView1ID] == -1) {
+            prevView1?.alpha = 0F
+            prevView2?.alpha = 0F
+            return
         }
-        if (prevView2 != null && !(prevView2?.equals(firstView)!! || prevView2?.equals(view)!!)) {
-            prevView2?.setImageResource(R.drawable.memory_card_back_v1)
-            prevView2?.rotation = 0F
-            prevView2?.rotationY = 0F
+
+        if (prevView1 != null && !(prevView1?.equals(view)!!)) {
+            resetAsset(prevView1)
+        }
+        if (prevView2 != null && !(prevView2?.equals(view)!!)) {
+            resetAsset(prevView2)
         }
     }
+
+    private fun resetAsset(view: ImageView?) {
+        view?.setImageResource(MainModel.card_back_texture)
+        view?.rotation = 0F
+        view?.rotationY = 0F
+    }
+
+    override fun onBackPressed() {
+        BackDialog(this).show()
+        turnCount = 0
+    }
 }
-
-
-// todo Counter with required turns
-// todo database with highscores, and name who did it (in main menu)
-// todo make "sure you want to end this game?" dialog when pressing back..
-
-// todo start game button in main menu
-
-// todo save more stuff in model!!
-
-// todo !!!!!!!!!! end game victory animation !!
-
-// todo make toast to show if pair/notpair

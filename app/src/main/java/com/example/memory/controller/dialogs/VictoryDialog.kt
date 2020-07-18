@@ -1,4 +1,4 @@
-package com.example.memory.controller
+package com.example.memory.controller.dialogs
 
 import android.app.Activity
 import android.app.Dialog
@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Window
 import com.example.memory.R
+import com.example.memory.controller.GameActivity
+import com.example.memory.controller.MainActivity
 import com.example.memory.modell.MainModel
 import kotlinx.android.synthetic.main.victory_dialog.*
 
@@ -18,11 +20,7 @@ class VictoryDialog(c: Activity, private val size: Int, private val turnCount: I
 
     init {
         setCancelable(false)
-
     }
-
-    private val tag = "NewGameDialog"
-    private val model = MainModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +35,6 @@ class VictoryDialog(c: Activity, private val size: Int, private val turnCount: I
             context.startActivity(Intent(context, MainActivity::class.java))
         }
         restart.setOnClickListener {
-            Log.i(tag, "Selected item is: $size")
             context.startActivity(Intent(context, GameActivity::class.java).putExtra("SIZE", size))
         }
 

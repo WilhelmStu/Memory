@@ -1,4 +1,4 @@
-package com.example.memory.controller
+package com.example.memory.controller.dialogs
 
 import android.app.Activity
 import android.app.Dialog

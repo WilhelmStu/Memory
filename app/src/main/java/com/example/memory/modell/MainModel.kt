@@ -3,19 +3,23 @@ package com.example.memory.modell
 import com.example.memory.R
 
 
-class MainModel {
+object MainModel {
+
+
+    const val SMALL = 16
+    const val MEDIUM = 30
+    const val LARGE = 42
+    const val COLUMN_SMALL = 4
+    const val COLUMN_MEDIUM = 5
+    const val COLUMN_LARGE = 6
+    const val MEMORY_BLUE = R.drawable.memory_with_shadow_blue
+    const val MEMORY_RED = R.drawable.memory_with_shadow
+    const val PLAY_BUTTON_BLUE = R.drawable.play_now_blue_v2
+    const val PLAY_BUTTON_RED = R.drawable.play_now_v2
+
     val listOfSizes = arrayOf("$SMALL Tiles", "$MEDIUM Tiles", "$LARGE Tiles")
-
-    companion object {
-        const val SMALL = 16
-        const val MEDIUM = 30
-        const val LARGE = 42
-        const val COLUMN_SMALL = 4
-        const val COLUMN_MEDIUM = 5
-        const val COLUMN_LARGE = 6
-    }
-
-
+    const val card_back_texture = R.drawable.memory_card_back_v1
+    var defaultColor = true
     val cardTextures = arrayOf(
         R.drawable.card_1,
         R.drawable.card_2,

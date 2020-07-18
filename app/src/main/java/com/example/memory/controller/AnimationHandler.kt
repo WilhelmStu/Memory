@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 class AnimationHandler(context: Context, private var randArr: IntArray) {
 
 
-    private val model = MainModel()
     private var animFlipOut = AnimatorInflater.loadAnimator(context, R.animator.out_animation) as AnimatorSet
     private var animFlipIn = AnimatorInflater.loadAnimator(context, R.animator.in_animation) as AnimatorSet
     private var animFlipOutSecond = AnimatorInflater.loadAnimator(context, R.animator.out_animation) as AnimatorSet
@@ -52,7 +51,7 @@ class AnimationHandler(context: Context, private var randArr: IntArray) {
         animFlipOut.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
-                view.setImageResource(model.cardTextures[randArr[id]])
+                view.setImageResource(MainModel.cardTextures[randArr[id]])
                 animFlipIn.start()
             }
 
@@ -74,7 +73,7 @@ class AnimationHandler(context: Context, private var randArr: IntArray) {
         animFlipOut.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
-                secondView?.setImageResource(model.cardTextures[randArr[idSecond]])
+                secondView?.setImageResource(MainModel.cardTextures[randArr[idSecond]])
                 animFlipIn.start()
             }
         })
@@ -105,7 +104,7 @@ class AnimationHandler(context: Context, private var randArr: IntArray) {
         animFlipOutSecond.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
-                secondView?.setImageResource(model.cardTextures[randArr[idSecond]])
+                secondView?.setImageResource(MainModel.cardTextures[randArr[idSecond]])
                 animFlipInSecond.start()
             }
         })
