@@ -16,9 +16,9 @@ object MainModel {
     const val MEMORY_RED = R.drawable.memory_with_shadow
     const val PLAY_BUTTON_BLUE = R.drawable.play_now_blue_v2
     const val PLAY_BUTTON_RED = R.drawable.play_now_v2
+    const val card_back_texture = R.drawable.memory_card_back_v1
 
     val listOfSizes = arrayOf("$SMALL Tiles", "$MEDIUM Tiles", "$LARGE Tiles")
-    const val card_back_texture = R.drawable.memory_card_back_v1
     var defaultColor = true
     val cardTextures = arrayOf(
         R.drawable.card_1,

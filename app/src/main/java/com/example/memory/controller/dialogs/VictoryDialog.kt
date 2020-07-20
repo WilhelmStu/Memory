@@ -7,15 +7,15 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Window
 import com.example.memory.R
 import com.example.memory.controller.GameActivity
 import com.example.memory.controller.MainActivity
-import com.example.memory.modell.MainModel
 import kotlinx.android.synthetic.main.victory_dialog.*
 
-
+/**
+ * Dialog shown after a game is won, it can then be restarted or player returns to main menu
+ */
 class VictoryDialog(c: Activity, private val size: Int, private val turnCount: Int) : Dialog(c) {
 
     init {

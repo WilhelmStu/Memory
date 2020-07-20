@@ -13,7 +13,9 @@ import androidx.core.content.ContextCompat.startActivity
 import com.example.memory.R
 import kotlinx.android.synthetic.main.toast_layout.*
 
-
+/**
+ * Shows the about page of this app
+ */
 class AboutDialog(var c: Activity) : Dialog(c) {
 
     init {

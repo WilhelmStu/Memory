@@ -17,13 +17,16 @@ import com.example.memory.controller.GameActivity
 import com.example.memory.modell.MainModel
 import kotlinx.android.synthetic.main.new_game_dialog.*
 
-
-class NewGameDialog(var c: Activity) : Dialog(c), AdapterView.OnItemSelectedListener {
+/**
+ * NewGameDialog showing up after pressing "play now" button in main menu
+ */
+class NewGameDialog(c: Activity) : Dialog(c), AdapterView.OnItemSelectedListener {
 
     init {
         setCancelable(true)
     }
-    private var size = 16;
+
+    private var size = MainModel.SMALL
     private val tag = "NewGameDialog"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,12 +35,10 @@ class NewGameDialog(var c: Activity) : Dialog(c), AdapterView.OnItemSelectedList
         setContentView(R.layout.new_game_dialog)
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
 
-
-
         spinner!!.onItemSelectedListener = this
 
+        // adapter for spinner, provides the data to be displayed
         val arrayAdapter = ArrayAdapter(context, android.R.layout.simple_spinner_item, MainModel.listOfSizes)
-
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = arrayAdapter
 
@@ -46,6 +47,7 @@ class NewGameDialog(var c: Activity) : Dialog(c), AdapterView.OnItemSelectedList
         }
         start.setOnClickListener {
             Log.i(tag, "Selected item is: $size")
+            // start game with intent and provide size as extra data
             context.startActivity(Intent(context, GameActivity::class.java).putExtra("SIZE", size))
         }
 
@@ -61,9 +63,8 @@ class NewGameDialog(var c: Activity) : Dialog(c), AdapterView.OnItemSelectedList
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-
+        // not used
     }
-
 
 
 }

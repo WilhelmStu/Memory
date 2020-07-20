@@ -7,16 +7,14 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Window
 import com.example.memory.R
-import com.example.memory.controller.GameActivity
 import com.example.memory.controller.MainActivity
-import com.example.memory.modell.MainModel
 import kotlinx.android.synthetic.main.back_dialog.*
-import kotlinx.android.synthetic.main.victory_dialog.*
 
-
+/**
+ * Back dialog showing upp when trying to go back to mainMenu
+ */
 class BackDialog(c: Activity) : Dialog(c) {
 
     init {

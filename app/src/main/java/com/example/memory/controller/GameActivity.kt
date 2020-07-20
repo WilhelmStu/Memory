@@ -1,7 +1,5 @@
 package com.example.memory.controller
 
-
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageView
@@ -14,7 +12,6 @@ import com.example.memory.controller.dialogs.VictoryDialog
 import com.example.memory.modell.MainModel
 import kotlinx.android.synthetic.main.activity_game.*
 import kotlin.random.Random
-
 
 private const val tag = "GameActivity"
 private var firstCardID = -1
@@ -29,14 +26,17 @@ private var remainingPairs = 0
 private var animation: AnimationHandler? = null
 private var turnCount = 0
 
-
+/**
+ * GameActivity, main activity where the game is played
+ */
 class GameActivity : AppCompatActivity(), CustomOnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
-        // get selected size from intent (SMALL if not specified)
+        // init, get selected size from intent (SMALL if not specified)
         init(intent.getIntExtra("SIZE", MainModel.SMALL))
+        // initialise animationHandler
         animation = AnimationHandler(this, randArr)
 
     }
@@ -44,9 +44,11 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
     private fun init(size: Int) {
         Log.i(tag, "Size is: $size")
+        // get the amount of columns based on size
         var columns = MainModel.COLUMN_SMALL
         if (size == MainModel.MEDIUM) columns = MainModel.COLUMN_MEDIUM
         if (size == MainModel.LARGE) columns = MainModel.COLUMN_LARGE
+        // set the layoutManager to be gridLayout
         recyclerView.layoutManager = GridLayoutManager(baseContext, columns)
 
         getRandomMemoryOrder(size)
@@ -55,11 +57,14 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
         for (int in arr.indices) {
             arr[int] = int
         }
+        // set adapter of recyclerView
         val adapter = CustomAdapter(arr, this)
         recyclerView.adapter = adapter
-
     }
 
+    /**
+     * Called from CustomAdapter, whenever a card os clicked
+     */
     override fun onCardClicked(i: Int, view: ImageView) {
         Log.i(tag, "Card clicked, ID: $i")
         if (arr[i] == -1 || firstCardID == i) {
@@ -67,20 +72,25 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
             return
         }
 
+        // make sure animations don't leave cards in unwanted states
         checkForWrongCardAlignment(view)
 
         if (firstCardID == -1) { // first card selected
             Log.i(tag, "is first card")
             firstCardID = i
+            prevView2?.setImageResource(MainModel.card_back_texture)
             changeCameraDistance(view)
             animation?.flipCard(view, i)
             firstView = view
         } else { // second card selected, do animation and check for pair
             Log.i(tag, "is second card")
             changeCameraDistance(view)
+
+            // make sure first card is aligned correctly (only maters if player is clicking to fast)
             firstView?.setImageResource(MainModel.cardTextures[randArr[firstCardID]])
             firstView?.rotation = 0F
             firstView?.rotationY = 0F
+
             if (randArr[firstCardID] == randArr[i]) { // got a pair -> make them vanish
                 Log.i(tag, "got a pair!! ( ${randArr[firstCardID]}, ${randArr[i]})")
                 arr[firstCardID] = -1
@@ -117,9 +127,7 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
     }
 
-
     private fun getRandomMemoryOrder(size: Int) {
-
         randArr = IntArray(size)
         val rng = Random
 
@@ -135,6 +143,9 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
         Log.i(tag, "randArray: ${randArr.contentToString()}")
     }
 
+    /**
+     * Change camera distance for animation, since to small distance can cause cut off animation
+     */
     private fun changeCameraDistance(view: ImageView) {
         val distance = 8000
         val scale: Float = resources.displayMetrics.density * distance
