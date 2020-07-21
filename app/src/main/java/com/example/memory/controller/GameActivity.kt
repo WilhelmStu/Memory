@@ -1,6 +1,7 @@
 package com.example.memory.controller
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
@@ -36,6 +37,7 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
         // init, get selected size from intent (SMALL if not specified)
         init(intent.getIntExtra("SIZE", MainModel.SMALL))
+        turnCount = 0
         // initialise animationHandler
         animation = AnimationHandler(this, randArr)
 
@@ -78,7 +80,11 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
         if (firstCardID == -1) { // first card selected
             Log.i(tag, "is first card")
             firstCardID = i
-            prevView2?.setImageResource(MainModel.card_back_texture)
+
+            Handler().postDelayed({ // make sure previous second cards state is correct
+                prevView2?.setImageResource(MainModel.card_back_texture)
+            }, 100)
+
             changeCameraDistance(view)
             animation?.flipCard(view, i)
             firstView = view
@@ -118,11 +124,14 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
         if (remainingPairs == 0) {
             val tmp = turnCount
             turnCount = 0
-            VictoryDialog(
-                this,
-                intent.getIntExtra("SIZE", MainModel.SMALL),
-                tmp
-            ).show()
+            Handler().postDelayed({ // make sure previous second cards state is correct
+                VictoryDialog(
+                    this,
+                    intent.getIntExtra("SIZE", MainModel.SMALL),
+                    tmp
+                ).show()
+            }, 300)
+
         }
 
     }
@@ -175,6 +184,9 @@ class GameActivity : AppCompatActivity(), CustomOnClickListener {
 
     override fun onBackPressed() {
         BackDialog(this).show()
+    }
+    override fun onRestart() {
+        super.onRestart()
         turnCount = 0
     }
 }
